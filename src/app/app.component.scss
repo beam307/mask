@@ -6,7 +6,117 @@
   #map {
     width: 100%;
     height: 100%;
-    overflow: hidden;
     position: relative;
+  }
+
+  .side {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    background: #fff;
+    z-index: 2;
+    border-radius: 10px;
+    border: 2px solid;
+    opacity: 0.9;
+
+    .status {
+      display: flex;
+      align-items: center;
+      padding: 5px;
+
+      .circle {
+        display: inline-block;
+        width: 25px;
+        height: 25px;
+        border-radius: 100%;
+      }
+
+      span {
+        margin-left: 10px;
+        font-size: 13px;
+        font-weight: bold;
+      }
+    }
+  }
+
+  .search-box {
+    position: absolute;
+    left: 50%;
+    top: 10px;
+    transform: translateX(-50%);
+    width: 30%;
+    z-index: 3;
+
+    .search {
+      display: block;
+      width: 100%;
+      padding: .45rem 0.8rem;
+      font-size: 0.8rem;
+      line-height: 1.25;
+      color: #495057;
+      background-color: #fff;
+      background-clip: padding-box;
+      border: 1px solid #ced4da;
+      border-radius: .25rem;
+      transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+  }
+
+}
+
+.name {
+  position: absolute;
+  background: #000;
+  color: #fff;
+  border-radius: 3px;
+  font-size: 12px;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 15px;
+
+  &:before {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-top: 10px solid #000;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 0 solid transparent;
+    content: " ";
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .title {
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  p {
+    margin: 5px 0px;
+  }
+}
+
+.info {
+  font-size: 12px;
+  padding: 5px;
+}
+
+.marker {
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+}
+
+@media all and (max-width: 768px) {
+  .full {
+    .search-box {
+      width: 50%;
+    }
+    .name {
+      font-size: 11px;
+      letter-spacing: -0.4px;
+    }
   }
 }

@@ -1,4 +1,25 @@
 <div class="full">
+  <div class="side">
+    <div class="status">
+      <div class="circle" [ngStyle]="{'background':color('plenty')}"></div>
+      <span>100개이상</span>
+    </div>
+    <div class="status">
+      <div class="circle" [ngStyle]="{'background':color('some')}"></div>
+      <span>30개~99개</span>
+    </div>
+    <div class="status">
+      <div class="circle" [ngStyle]="{'background':color('few')}"></div>
+      <span>2개~29개</span>
+    </div>
+    <div class="status">
+      <div class="circle" [ngStyle]="{'background':color()}"></div>
+      <span>0개~1개</span>
+    </div>
+  </div>
+  <div class="search-box">
+    <input #addr type="text" class="search" placeholder="주소를 입력해주세요."(keyup.enter)="search(addr.value)"/>
+  </div>
   <div id="map"></div>
   <div class="custom_zoomcontrol radius_border">
     <span (click)="zoomIn()"><img src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png"></span>
