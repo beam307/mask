@@ -9,36 +9,6 @@
     position: relative;
   }
 
-  .side {
-    position: absolute;
-    left: 10px;
-    top: 10px;
-    background: #fff;
-    z-index: 2;
-    border-radius: 10px;
-    border: 2px solid;
-    opacity: 0.9;
-
-    .status {
-      display: flex;
-      align-items: center;
-      padding: 5px;
-
-      .circle {
-        display: inline-block;
-        width: 25px;
-        height: 25px;
-        border-radius: 100%;
-      }
-
-      span {
-        margin-left: 10px;
-        font-size: 13px;
-        font-weight: bold;
-      }
-    }
-  }
-
   .search-box {
     position: absolute;
     left: 50%;
@@ -58,7 +28,24 @@
       background-clip: padding-box;
       border: 1px solid #ced4da;
       border-radius: .25rem;
-      transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+      transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    }
+  }
+
+  .gps {
+    position: absolute;
+    z-index: 3;
+    padding: 5px 10px;
+    text-align: center;
+    top: 10px;
+    left: 10px;
+    border: 1px solid;
+    border-radius: 4px;
+    background: #fff;
+
+    &:hover {
+      background: #eee;
+      cursor: pointer;
     }
   }
 
@@ -74,6 +61,7 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 5px 15px;
+  letter-spacing: -0.4px;
 
   &:before {
     top: 100%;
@@ -104,9 +92,9 @@
 }
 
 .marker {
-  width: 30px;
-  height: 30px;
-  border-radius: 100%;
+  border-radius: 5px;
+  color: white;
+  padding: 5px 10px;
 }
 
 @media all and (max-width: 768px) {
@@ -114,9 +102,9 @@
     .search-box {
       width: 50%;
     }
+
     .name {
       font-size: 11px;
-      letter-spacing: -0.4px;
     }
   }
 }

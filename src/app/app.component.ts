@@ -30,6 +30,7 @@ export class AppComponent implements AfterViewInit {
 
     this.map = new kakao.maps.Map(container, this.options);
     this.map.setMaxLevel(9);
+    this.getLocation();
     this.customOverlay = new kakao.maps.CustomOverlay({zIndex: 2});
     this.geocoder = new kakao.maps.services.Geocoder();
 
@@ -46,11 +47,18 @@ export class AppComponent implements AfterViewInit {
       this.displayCenterInfo(this.map.getCenter());
     });
 
+    document.addEventListener('click', (e: any) => {
+      e.stopImmediatePropagation();
+      if (!e.target.classList.contains('marker')) {
+        this.customOverlay.setMap(null);
+      }
+    });
+
   }
 
   displayCenterInfo(result) {
     let level = this.map.getLevel();
-    this.meter = level > 5 ? 972: 12 * Math.pow(level + 4, 2);
+    this.meter = level > 5 ? 972 : 12 * Math.pow(level + 4, 2);
     this.callAPI(result.getLat(), result.getLng());
   }
 
@@ -69,6 +77,7 @@ export class AppComponent implements AfterViewInit {
     content.className = 'info';
     content.innerHTML = `
       <div class="marker" style="background: ${ this.color(info.remain_stat) }">
+        ${ this.title(info.remain_stat) }
       </div>
     `;
     let marker = new kakao.maps.CustomOverlay({
@@ -92,17 +101,51 @@ export class AppComponent implements AfterViewInit {
       this.customOverlay.setPosition(new kakao.maps.LatLng(info.lat, info.lng));
       this.customOverlay.setMap(this.map);
     });
+
+    content.addEventListener('mouseover', () => {
+      let content = `
+        <div class="name">
+            <p class="title">이름 : ${ info.name || '정보없음' }</p>
+            <p>주소 : ${ info.addr || '정보없음' }</p>
+            <p>입고날짜 : ${ info.stock_at || '정보없음' }</p>
+            <p>업데이트날짜 : ${ info.created_at || '정보없음' }</p>
+        </div>
+      `;
+      this.customOverlay.setContent(content);
+      this.customOverlay.setPosition(new kakao.maps.LatLng(info.lat, info.lng));
+      this.customOverlay.setMap(this.map);
+    });
+
+    content.addEventListener('mouseout', () => {
+      this.customOverlay.setMap(null);
+    });
   }
 
   color(status?) {
     if (status == 'plenty') {
-      return '#388e3c';
+      return '#178e1d';
     } else if (status == 'some') {
-      return '#ffa000';
+      return '#ffa223';
     } else if (status == 'few') {
-      return '#d32f2f';
+      return '#d3171e';
+    } else if (status == 'break') {
+      return '#000';
     } else {
-      return '#616161';
+      return '#5d5d5d';
+    }
+  }
+
+  title(status?) {
+    if (status == 'plenty') {
+      return '100개 이상';
+    } else if (status == 'some') {
+      return '30~99개';
+    } else if (status == 'few') {
+      return '2~29개';
+    } else if (status == 'break') {
+      return '판매중지';
+    } else {
+      return '품절';
     }
   }
 
@@ -122,6 +165,22 @@ export class AppComponent implements AfterViewInit {
 
   zoomOut() {
     this.map.setLevel(this.map.getLevel() + 1);
+  }
+
+  getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.map.panTo(new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude));
+      }, (error) => {
+        console.error(error);
+      }, {
+        enableHighAccuracy: false,
+        maximumAge: 0,
+        timeout: Infinity
+      });
+    } else {
+      console.log('GPS를 지원하지 않습니다');
+    }
   }
 
 }
