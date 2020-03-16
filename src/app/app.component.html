@@ -1,13 +1,17 @@
 <div class="full">
   <div class="search-box">
-    <input #addr type="text" class="search" placeholder="주소를 입력해주세요."(keyup.enter)="search(addr.value)"/>
+    <input #addr type="text" class="search" placeholder="장소, 건물, 주소 검색" (keyup.enter)="search(addr.value)"/>
+    <button class="search-ico" (click)="search(addr.value)">검색</button>
   </div>
   <div class="gps" (click)="getLocation()">
-    <img src="assets/gps.png">
+    <img src="assets/gps.png" alt="gps-icon">
+  </div>
+  <div id="filter">
+    <label for="isMask">품절숨기기
+      <input type="checkbox" id="isMask" [(ngModel)]="hidden"
+             (ngModelChange)="displayCenterInfo(map.getCenter())">
+    </label>
   </div>
   <div id="map"></div>
-  <div class="custom_zoomcontrol radius_border">
-    <span (click)="zoomIn()"><img src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png"></span>
-    <span (click)="zoomOut()"><img src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png"></span>
-  </div>
+  <div id="toarst"></div>
 </div>

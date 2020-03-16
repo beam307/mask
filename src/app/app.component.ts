@@ -14,9 +14,9 @@ export class AppComponent implements AfterViewInit {
   public map;
   public meter;
   public customOverlay;
-  public geocoder;
-  public zoomControl;
+  public placeSearch;
   public markers = [];
+  public hidden = false;
   public options = {
     center: new kakao.maps.LatLng(37.428707, 127.151292),
     level: 3
@@ -32,10 +32,11 @@ export class AppComponent implements AfterViewInit {
     this.map.setMaxLevel(9);
     this.getLocation();
     this.customOverlay = new kakao.maps.CustomOverlay({zIndex: 2});
-    this.geocoder = new kakao.maps.services.Geocoder();
 
-    this.zoomControl = new kakao.maps.ZoomControl();
-    this.map.addControl(this.zoomControl, kakao.maps.ControlPosition.RIGHT);
+    this.placeSearch = new kakao.maps.services.Places();
+
+    let zoomControl = new kakao.maps.ZoomControl();
+    this.map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 
     this.displayCenterInfo(this.map.getCenter());
     this.eventListener();
@@ -63,13 +64,21 @@ export class AppComponent implements AfterViewInit {
   }
 
   callAPI(lng, lat) {
-    this.markers.forEach(m => m.setMap(null));
-    this.markers = [];
+    this.removeMaker();
     this.maskService.around(lng, lat, this.meter)
-      .then(r => r.stores.forEach(s => this.addMarker(s)))
+      .then(r => {
+        r.stores
+          .filter(s => !this.hidden || (s.remain_stat == 'plenty' || s.remain_stat == 'some' || s.remain_stat == 'few'))
+          .forEach(s => this.addMarker(s));
+      })
       .catch(e => {
         console.log(e);
       });
+  }
+
+  removeMaker() {
+    this.markers.forEach(m => m.setMap(null));
+    this.markers = [];
   }
 
   addMarker(info) {
@@ -85,9 +94,13 @@ export class AppComponent implements AfterViewInit {
       content: content,
       position: new kakao.maps.LatLng(info.lat, info.lng)
     });
-    this.markers.push(marker);
     marker.setMap(this.map);
+    this.markers.push(marker);
 
+    this.markerEventListen(content, info);
+  }
+
+  markerEventListen(content, info) {
     content.addEventListener('click', () => {
       let content = `
         <div class="name">
@@ -128,8 +141,6 @@ export class AppComponent implements AfterViewInit {
       return '#ffa223';
     } else if (status == 'few') {
       return '#d3171e';
-    } else if (status == 'break') {
-      return '#000';
     } else {
       return '#5d5d5d';
     }
@@ -144,43 +155,52 @@ export class AppComponent implements AfterViewInit {
       return '2~29개';
     } else if (status == 'break') {
       return '판매중지';
+    } else if (status == null) {
+      return '정보없음';
     } else {
       return '품절';
     }
   }
 
   search(event) {
-    this.geocoder.addressSearch(event, (result, status) => {
+    this.placeSearch.keywordSearch(event, (data, status) => {
       if (status === kakao.maps.services.Status.OK) {
-        this.map.setCenter(new kakao.maps.LatLng(result[0].y, result[0].x));
+        this.map.setCenter(new kakao.maps.LatLng(data[0].y, data[0].x));
         this.map.setLevel(3);
+      } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+        this.showToarst('검색 결과가 존재하지 않습니다.');
+        return;
+      } else if (status === kakao.maps.services.Status.ERROR) {
+        this.showToarst('검색 결과 중 오류가 발생했습니다.');
+        return;
+
       }
     });
   }
 
-
-  zoomIn() {
-    this.map.setLevel(this.map.getLevel() - 1);
-  }
-
-  zoomOut() {
-    this.map.setLevel(this.map.getLevel() + 1);
-  }
-
   getLocation() {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
+      navigator.geolocation.getCurrentPosition(position => {
         this.map.panTo(new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude));
-      }, (error) => {
-        console.error(error);
+      }, () => {
+        this.showToarst('위치찾기를 실패하였습니다.');
       }, {
         enableHighAccuracy: false,
         maximumAge: 0,
         timeout: Infinity
       });
     } else {
-      console.log('GPS를 지원하지 않습니다');
+      this.showToarst('위치찾기를 실패하였습니다.');
     }
+  }
+
+  showToarst(text) {
+    let x = document.getElementById('toarst');
+    x.className = 'show';
+    x.innerText = text;
+    setTimeout(() => {
+      x.className = x.className.replace('show', '');
+    }, 2000);
   }
 
 }

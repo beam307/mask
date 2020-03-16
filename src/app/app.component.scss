@@ -14,21 +14,57 @@
     left: 50%;
     top: 10px;
     transform: translateX(-50%);
-    width: 30%;
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    border-radius: 3px;
+    box-shadow: 0 2px 1px 0 rgba(0, 0, 0, .15);
     z-index: 3;
 
     .search {
       display: block;
       width: 100%;
-      padding: .45rem 0.8rem;
-      font-size: 0.8rem;
-      line-height: 1.25;
+      font-size: 0.9rem;
+      line-height: 1;
+      padding: 10px 16px;
       color: #495057;
-      background-color: #fff;
-      background-clip: padding-box;
-      border: 1px solid #ced4da;
-      border-radius: .25rem;
-      transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+      background-color: transparent;
+      outline: 0;
+      border: none;
+    }
+
+    .search-ico {
+      cursor: pointer;
+      font-size: 0;
+      border: none;
+      width: 36px;
+      height: 36px;
+      padding: 10px;
+      outline: none;
+      background: url('../assets/search-icon.png') no-repeat 3px;
+    }
+  }
+
+  #filter {
+    position: absolute;
+    z-index: 3;
+    padding: 5px 10px;
+    text-align: center;
+    top: 60px;
+    left: 10px;
+    border: 1px solid;
+    border-radius: 4px;
+    background: #fff;
+    display: inline-block;
+
+    label {
+      font-size: 13px;
+    }
+
+    input {
+      vertical-align: top;
     }
   }
 
@@ -82,7 +118,7 @@
   }
 
   p {
-    margin: 5px 0px;
+    margin: 5px 0;
   }
 }
 
@@ -94,7 +130,25 @@
 .marker {
   border-radius: 5px;
   color: white;
-  padding: 5px 10px;
+  padding: 6px 12px;
+}
+
+#toarst {
+  visibility: hidden;
+  background-color: #333;
+  color: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  position: fixed;
+  z-index: 3;
+  left: 15px;
+  bottom: 15px;
+  font-size: 12px;
+
+  &.show {
+    visibility: visible;
+    animation: fadein 0.5s, fadeout 0.5s 1.5s;
+  }
 }
 
 @media all and (max-width: 768px) {
@@ -106,5 +160,31 @@
     .name {
       font-size: 11px;
     }
+
+    #toarst {
+      right: 15px;
+    }
+  }
+}
+
+@keyframes fadein {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+  to {
+    bottom: 15px;
+    opacity: 1;
+  }
+}
+
+@keyframes fadeout {
+  from {
+    bottom: 15px;
+    opacity: 1;
+  }
+  to {
+    bottom: 0;
+    opacity: 0;
   }
 }
